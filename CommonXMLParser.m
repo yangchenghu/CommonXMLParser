@@ -45,14 +45,19 @@
     return self;
 }
 
-- (NSString *)GenStringFromObject:(NSDictionary *)dicObj
+- (NSString *)GenStringFromObject:(NSDictionary *)dicObj order:(BOOL)order
 {
+    NSArray * arrKeys = [dicObj allKeys];
+    if (order) {
+        arrKeys = [arrKeys sortedArrayUsingSelector:@selector(compare:)];
+    }
+    
     NSMutableString * mString = [NSMutableString string];
     
-    for (NSString * strKey in [dicObj allKeys]) {
+    for (NSString * strKey in arrKeys) {
         
         if ([dicObj[strKey] isKindOfClass:[NSDictionary class]]) {
-            [mString appendFormat:@"\n<%@>\n%@\n</%@>", strKey, [self GenStringFromObject:dicObj[strKey]], strKey];
+            [mString appendFormat:@"\n<%@>\n%@\n</%@>", strKey, [self GenStringFromObject:dicObj[strKey] order:order], strKey];
         }
         else {
             [mString appendFormat:@"<%@>%@</%@>", strKey, dicObj[strKey], strKey];

@@ -32,9 +32,10 @@ typedef void(^FindKeyBlock)(NSString * strKey, NSArray * keysPath);
 
 /**
  * @description 将对象序列化成xml字符串
- * @param
- * @return
+ * @param dicObj 传入的对象
+ * @param order 是否按照key的字母顺序排序
+ * @return NSString 返回xml的字符串
  */
-- (NSString *)GenStringFromObject:(NSDictionary *)dicObj;
+- (NSString *)GenStringFromObject:(NSDictionary *)dicObj order:(BOOL)order;
 
 @end
