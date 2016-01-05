@@ -3,14 +3,15 @@
 //  CommonPay
 //
 //  Created by yangchenghu on 16/1/5.
+//  Version:0.1
 //  Copyright © 2016年 yangchenghu. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
-typedef void(^CompletionBlock)(BOOL bFinish, NSDictionary * dicResult);
+typedef void(^Completion)(BOOL bFinish, NSDictionary * dicResult);
 
-typedef void(^FindKeyBlock)(NSString * strKey, NSArray * keysPath);
+typedef void(^FindKey)(NSString * strKey, NSArray * keysPath);
 
 @interface CommonXMLParser : NSObject <NSXMLParserDelegate>
 
@@ -28,7 +29,7 @@ typedef void(^FindKeyBlock)(NSString * strKey, NSArray * keysPath);
  * @param completionblock 完成时的回调
  * @return
  */
-- (void)parserString:(NSString *)string findkey:(FindKeyBlock)findkeyblock completion:(CompletionBlock)completionblock;
+- (void)parserString:(NSString *)string findkey:(FindKey)findkeyblock completion:(Completion)completionblock;
 
 /**
  * @description 将对象序列化成xml字符串
@@ -36,6 +37,6 @@ typedef void(^FindKeyBlock)(NSString * strKey, NSArray * keysPath);
  * @param order 是否按照key的字母顺序排序
  * @return NSString 返回xml的字符串
  */
-- (NSString *)GenStringFromObject:(NSDictionary *)dicObj order:(BOOL)order;
++ (NSString *)GenStringFromObject:(NSDictionary *)dicObj order:(BOOL)order;
 
 @end

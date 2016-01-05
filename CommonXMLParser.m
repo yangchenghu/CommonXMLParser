@@ -22,9 +22,9 @@
     
     NSMutableArray * _muArrKeysStack;
     
-    FindKeyBlock _findKey;
+    FindKey _findKeyBlock;
     
-    CompletionBlock _completion;
+    Completion _completionBlock;
 }
 
 @end
@@ -45,7 +45,7 @@
     return self;
 }
 
-- (NSString *)GenStringFromObject:(NSDictionary *)dicObj order:(BOOL)order
++ (NSString *)GenStringFromObject:(NSDictionary *)dicObj order:(BOOL)order
 {
     NSArray * arrKeys = [dicObj allKeys];
     if (order) {
@@ -68,7 +68,7 @@
 }
 
 
-- (void)parserString:(NSString *)string findkey:(FindKeyBlock)findkeyblock completion:(CompletionBlock)completionblock
+- (void)parserString:(NSString *)string findkey:(FindKey)findkeyblock completion:(Completion)completionblock
 {
     if (nil == _muDicReslut) {
         _muDicReslut = [NSMutableDictionary dictionary];
@@ -90,9 +90,9 @@
     
     [_xmlParser setDelegate:self];
     
-    _findKey = [findkeyblock copy];
+    _findKeyBlock = [findkeyblock copy];
     
-    _completion = [completionblock copy];
+    _completionBlock = [completionblock copy];
     
     [_xmlParser parse];
 }
@@ -129,12 +129,16 @@
     
     [_muArrKeysStack addObject:_strItemKey];
     
-    if (_findKey) {
-        _findKey(_strItemKey, [_muArrKeysStack copy]);
+    if (_findKeyBlock) {
+        _findKeyBlock(_strItemKey, [_muArrKeysStack copy]);
     }
 }
 
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string{
+    
+    if ([@"\n" isEqualToString:string] || [@"\r" isEqualToString:string]) {
+        return;
+    }
     
     NSInteger iSpaceCout = 0;
     for (NSInteger i = 0 ; i < string.length ; i ++) {
@@ -164,10 +168,10 @@
 - (void)parserDidEndDocument:(NSXMLParser *)parser{
     
     if (0 != _muDicReslut.count) {
-        _completion(YES, [_muDicReslut copy]);
+        _completionBlock(YES, [_muDicReslut copy]);
     }
     else {
-        _completion(NO, nil);
+        _completionBlock(NO, nil);
     }
     
     [_muDicReslut removeAllObjects];
