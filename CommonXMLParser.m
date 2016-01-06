@@ -99,21 +99,23 @@
 
 
 #pragma mark - NSXMLParserDelegate
-
-//解析文档开始
 - (void)parserDidStartDocument:(NSXMLParser *)parser{
     [_muDicReslut removeAllObjects];
     [_muArrContainerStack removeAllObjects];
     [_muArrKeysStack removeAllObjects];
-
+    
     _mDicPointer = _muDicReslut;
     
     [_muArrContainerStack addObject:_mDicPointer];
 }
 - (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict{
     
+    if ([@"xml" isEqualToString:elementName]) {
+        return;
+    }
+    
     _strItemKey = [elementName copy];
-
+    
     if (0 !=  _muArrKeysStack.count) {
         if (nil == _mDicPointer[_muArrKeysStack.lastObject]) {
             NSMutableDictionary * muDicTemp = [NSMutableDictionary dictionary];
@@ -158,11 +160,22 @@
 
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName{
     
-    [_muArrContainerStack removeLastObject];
-    _mDicPointer = [_muArrContainerStack lastObject];
+    if ([@"xml" isEqualToString:elementName]) {
+        return;
+    }
     
-    [_muArrKeysStack removeLastObject];
-
+    if (_muArrContainerStack.count != 0) {
+        [_muArrContainerStack removeLastObject];
+        _mDicPointer = [_muArrContainerStack lastObject];
+        
+        if (nil == _mDicPointer) {
+            _mDicPointer = _muDicReslut;
+        }
+    }
+    
+    if (_muArrKeysStack.count != 0) {
+        [_muArrKeysStack removeLastObject];
+    }
 }
 
 - (void)parserDidEndDocument:(NSXMLParser *)parser{
